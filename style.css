@@ -1,0 +1,611 @@
+/* =============================================
+   RESET & BASE
+   ============================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Light / Purple theme */
+  --bg-gradient-start: #6E57E5;
+  --bg-gradient-end:   #9B84F5;
+  --card-bg:           #ffffff;
+  --card-shadow:       0 8px 32px rgba(60, 40, 160, 0.18);
+  --text-primary:      #2d2250;
+  --text-secondary:    #7b6fa0;
+  --text-muted:        #a09ac0;
+  --input-bg:          #f4f2fb;
+  --input-border:      #d5cef2;
+  --input-focus:       #6E57E5;
+  --btn-primary-bg:    #6E57E5;
+  --btn-primary-hover: #5a44d4;
+  --btn-green-bg:      #3ecf8e;
+  --btn-green-hover:   #2dba7c;
+  --btn-yellow-bg:     #f5a623;
+  --btn-yellow-hover:  #e09510;
+  --btn-red-bg:        #e05252;
+  --btn-red-hover:     #c93c3c;
+  --pill-bg:           #4a90d9;
+  --pill-hover:        #3578c5;
+  --divider:           #ede9fc;
+  --modal-overlay:     rgba(40, 20, 100, 0.55);
+  --timer-color:       #6E57E5;
+  --clock-color:       #ffffff;
+  --greeting-color:    rgba(255,255,255,0.92);
+  --date-color:        rgba(255,255,255,0.75);
+  --title-gradient:    linear-gradient(135deg, #6E57E5, #9B84F5);
+  --task-done-color:   #a09ac0;
+  --error-color:       #e05252;
+  --change-name-color: rgba(255,255,255,0.70);
+}
+
+/* Dark Mode Variables */
+body.dark-mode {
+  --bg-gradient-start: #1a1630;
+  --bg-gradient-end:   #2c2550;
+  --card-bg:           #24203a;
+  --card-shadow:       0 8px 32px rgba(0, 0, 0, 0.45);
+  --text-primary:      #e8e3ff;
+  --text-secondary:    #9b94c7;
+  --text-muted:        #6b6490;
+  --input-bg:          #1e1b30;
+  --input-border:      #3d3660;
+  --input-focus:       #9B84F5;
+  --btn-primary-bg:    #7c67f0;
+  --btn-primary-hover: #6E57E5;
+  --pill-bg:           #3a6ea8;
+  --pill-hover:        #2d5a8e;
+  --divider:           #2e2a45;
+  --modal-overlay:     rgba(10, 8, 25, 0.75);
+  --timer-color:       #9B84F5;
+  --clock-color:       #ffffff;
+  --greeting-color:    rgba(255,255,255,0.90);
+  --date-color:        rgba(200,190,255,0.75);
+  --title-gradient:    linear-gradient(135deg, #9B84F5, #c4b5fd);
+  --task-done-color:   #5c5880;
+  --change-name-color: rgba(200,190,255,0.60);
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+  min-height: 100vh;
+  padding: 24px 16px 40px;
+  transition: background 0.4s ease;
+}
+
+/* =============================================
+   MODAL
+   ============================================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal-box {
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 40px 36px;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  text-align: center;
+  animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.modal-box h2 {
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.modal-box p {
+  color: var(--text-secondary);
+  margin-bottom: 22px;
+  font-size: 0.95rem;
+}
+
+.modal-box input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--input-border);
+  border-radius: 10px;
+  font-size: 1rem;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  outline: none;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+}
+
+.modal-box input:focus {
+  border-color: var(--input-focus);
+}
+
+#modal-save-btn {
+  width: 100%;
+  padding: 13px;
+  background: var(--btn-primary-bg);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+#modal-save-btn:hover {
+  background: var(--btn-primary-hover);
+  transform: translateY(-1px);
+}
+
+/* =============================================
+   DASHBOARD GRID
+   ============================================= */
+.dashboard {
+  max-width: 920px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+/* =============================================
+   CARDS — SHARED
+   ============================================= */
+.card {
+  background: var(--card-bg);
+  border-radius: 20px;
+  box-shadow: var(--card-shadow);
+  padding: 28px 28px 24px;
+  transition: background 0.4s ease, box-shadow 0.4s ease;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  background: var(--title-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 18px;
+  letter-spacing: 0.02em;
+}
+
+/* =============================================
+   TOP CARD: Clock / Date / Greeting
+   ============================================= */
+.card-top {
+  background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+  text-align: center;
+  position: relative;
+  padding: 36px 28px 32px;
+}
+
+.clock {
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  font-weight: 800;
+  color: var(--clock-color);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.2);
+}
+
+.date-display {
+  font-size: clamp(0.85rem, 2vw, 1.05rem);
+  color: var(--date-color);
+  margin-top: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.greeting {
+  font-size: clamp(1.3rem, 3.5vw, 2rem);
+  font-weight: 700;
+  color: var(--greeting-color);
+  margin-top: 12px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.15);
+}
+
+.change-name-btn {
+  margin-top: 12px;
+  background: none;
+  border: 1px solid var(--change-name-color);
+  color: var(--change-name-color);
+  border-radius: 20px;
+  padding: 5px 16px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.change-name-btn:hover {
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  border-color: #fff;
+}
+
+/* Theme toggle button */
+.theme-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255,255,255,0.20);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-btn:hover {
+  background: rgba(255,255,255,0.35);
+  transform: rotate(20deg);
+}
+
+/* =============================================
+   MIDDLE ROW
+   ============================================= */
+.middle-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* =============================================
+   TIMER CARD
+   ============================================= */
+.card-timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.timer-display {
+  font-size: clamp(2.8rem, 6vw, 4.5rem);
+  font-weight: 800;
+  color: var(--timer-color);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  margin-bottom: 20px;
+  line-height: 1;
+}
+
+.timer-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* =============================================
+   TASKS CARD
+   ============================================= */
+.task-input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.task-input-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-error {
+  font-size: 0.8rem;
+  color: var(--error-color);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.task-error.hidden {
+  display: none;
+}
+
+.task-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+/* Custom scrollbar */
+.task-list::-webkit-scrollbar {
+  width: 5px;
+}
+.task-list::-webkit-scrollbar-track {
+  background: var(--input-bg);
+  border-radius: 4px;
+}
+.task-list::-webkit-scrollbar-thumb {
+  background: var(--input-border);
+  border-radius: 4px;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--input-bg);
+  border-radius: 10px;
+  border: 1px solid var(--divider);
+  transition: background 0.2s;
+  animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.task-item input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--btn-primary-bg);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.task-label {
+  flex: 1;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  word-break: break-word;
+  transition: color 0.2s, text-decoration 0.2s;
+}
+
+.task-label.done {
+  text-decoration: line-through;
+  color: var(--task-done-color);
+}
+
+.task-delete-btn {
+  flex-shrink: 0;
+  background: var(--btn-red-bg);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 4px 9px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.task-delete-btn:hover {
+  background: var(--btn-red-hover);
+}
+
+/* =============================================
+   QUICK LINKS CARD
+   ============================================= */
+.link-input-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.link-input-group input {
+  flex: 1;
+  min-width: 120px;
+}
+
+.links-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 6px;
+}
+
+.link-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--pill-bg);
+  color: #fff;
+  padding: 7px 14px 7px 16px;
+  border-radius: 50px;
+  font-size: 0.87rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  animation: slideIn 0.2s ease;
+}
+
+.link-pill:hover {
+  background: var(--pill-hover);
+  transform: translateY(-2px);
+}
+
+.link-pill-text {
+  text-decoration: none;
+  color: inherit;
+}
+
+.link-pill-delete {
+  background: rgba(255,255,255,0.30);
+  border: none;
+  color: #fff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s;
+  line-height: 1;
+}
+
+.link-pill-delete:hover {
+  background: rgba(255,255,255,0.55);
+}
+
+/* =============================================
+   SHARED INPUT STYLES
+   ============================================= */
+input[type="text"],
+input[type="url"] {
+  padding: 10px 14px;
+  border: 2px solid var(--input-border);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s, background 0.3s;
+  width: 100%;
+}
+
+input[type="text"]::placeholder,
+input[type="url"]::placeholder {
+  color: var(--text-muted);
+}
+
+input[type="text"]:focus,
+input[type="url"]:focus {
+  border-color: var(--input-focus);
+  background: var(--card-bg);
+}
+
+/* =============================================
+   BUTTONS — SHARED
+   ============================================= */
+.btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: var(--btn-primary-bg);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--btn-primary-hover);
+  box-shadow: 0 4px 14px rgba(110, 87, 229, 0.4);
+}
+
+.btn-green {
+  background: var(--btn-green-bg);
+  color: #fff;
+}
+.btn-green:hover {
+  background: var(--btn-green-hover);
+  box-shadow: 0 4px 14px rgba(62, 207, 142, 0.4);
+}
+
+.btn-yellow {
+  background: var(--btn-yellow-bg);
+  color: #fff;
+}
+.btn-yellow:hover {
+  background: var(--btn-yellow-hover);
+  box-shadow: 0 4px 14px rgba(245, 166, 35, 0.4);
+}
+
+.btn-red {
+  background: var(--btn-red-bg);
+  color: #fff;
+}
+.btn-red:hover {
+  background: var(--btn-red-hover);
+  box-shadow: 0 4px 14px rgba(224, 82, 82, 0.4);
+}
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 640px) {
+  body {
+    padding: 14px 10px 32px;
+  }
+
+  .card {
+    padding: 20px 16px;
+  }
+
+  .middle-row {
+    grid-template-columns: 1fr;
+  }
+
+  .task-input-row {
+    flex-direction: column;
+  }
+
+  .task-input-row input {
+    width: 100%;
+  }
+
+  .link-input-group {
+    flex-direction: column;
+  }
+
+  .link-input-group input {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .timer-controls {
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 9px 14px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 800px) {
+  .middle-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
